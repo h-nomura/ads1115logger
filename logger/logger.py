@@ -42,7 +42,7 @@ with open('./data/MI{0:%y%m%d%H%M%S}'.format(now),'w') as f:
         print('{0:%Y%m%d%H%M%S%f}'.format(now))
         value1 = adc.read_adc(0,gain = GAIN)
         print(value1)
-        volte1 = 12.288 * (float(value1) / 65536) - 6.144
+        volte1 = 6.144 * (float(value1) / 32768)
         print('volte(V)==')
         print(volte1)
         data = ['{0:%Y%m%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value1,volte1]
