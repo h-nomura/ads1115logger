@@ -20,32 +20,45 @@ GAIN = 0
 import time, datetime
 import csv
 import pprint
-now = datetime.datetime.now()
-with open('./data/MI{0:%y%m%d%H%M%S}'.format(now),'w') as f:
-    data = ['year_month_day','hour','minute','second','float','raw','volte(V)']
+
+def measure(port_number):
+    total = 0
+    for i in range(100):
+        value = adc.read_adc(port_number,gain=GAIN)
+        total +=  value
+    #print(total/100)
+    return total/100
+
+def convert_V(value):
+    return 6.144 * (float(value) / 32768)
+
+def convert_nT(value):
+    volte = 6.144 * (float(value) / 32768)
+    return (volte * 1000) / 0.16
+
+now = datetime.datetime.now()#get time
+with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}'.format(now),'w') as f:
+    data = ['year_month_day','hour','minute','second','float','raw','volte(V)','Magnetic force(nT)']
     writer = csv.writer(f)
     writer.writerow(data)
     while True:
-        if False:
-            s_time = time.time()
-            for i in range(100):
-                value1 = adc.read_adc(0,gain = GAIN)
-                value2 = adc.read_adc(1,gain = GAIN)
-                value3 = adc.read_adc(2,gain = GAIN)
-                value4 = adc.read_adc(3,gain = GAIN)
-            f_time = time.time()
-            print("need time")
-            print(f_time - s_time)
-            value = adc.read_adc(1,gain = GAIN)
+        
+        #s_time = time.time()
+        #for i in range(100):
+        #    value1 = adc.read_adc(0,gain = GAIN)
+        #    value2 = adc.read_adc(1,gain = GAIN)
+        #    value3 = adc.read_adc(2,gain = GAIN)
+        #    value4 = adc.read_adc(3,gain = GAIN)
+        #f_time = time.time()
+        #print("need time")
+        #print(f_time - s_time)
+        #value = adc.read_adc(1,gain = GAIN)
+        
+        now = datetime.datetime.now()#get time
+        value = measure(0)
+        print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
 
-        now = datetime.datetime.now()
-        print('{0:%Y%m%d%H%M%S%f}'.format(now))
-        value1 = adc.read_adc(0,gain = GAIN)
-        print(value1)
-        volte1 = 6.144 * (float(value1) / 32768)
-        print('volte(V)==')
-        print(volte1)
-        data = ['{0:%Y%m%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value1,volte1]
+        data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_V(value),convert_nT(value)]
         writer = csv.writer(f)
         writer.writerow(data)
-        time.sleep(0.5)
+        #time.sleep(0.5)
