@@ -40,7 +40,7 @@ ax = fig.add_subplot(111) #...2
 ax.plot(df.index,df['Magnetic force'])
 ax.set_title(check_day_str[i] + ' ' + 'Magnetic force(nT)')
 plt.savefig('./fig/' + check_day_str[i] + '_' + 'Magnetic force(nT).png')
-plt.show()
+#Splt.show()
 
 for i in range(24):
     if check_day_str[i] != '0':
