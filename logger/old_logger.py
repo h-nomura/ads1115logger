@@ -30,10 +30,10 @@ def measure(port_number):
     return total/100
 
 def convert_V(value):
-    return (6.144 * (float(value) / 32768)) * 0.14347 + 2.22695
+    return (6.144 * (float(value) / 32768)) * 6.970260223 - 15.522769516
 
 def convert_nT(value):
-    volte = (6.144 * (float(value) / 32768)) * 0.14347 + 2.22695
+    volte = (6.144 * (float(value) / 32768)) * 6.970260223 - 15.522769516
     return (volte * 1000) / 0.16
 
 now = datetime.datetime.now()#get time
