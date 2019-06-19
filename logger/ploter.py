@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 import pandas as pd
 
 
-csv_file = open("./data/MI19-06-17_17h14m37s","r",encoding = "ms932",errors = "", newline = "")
+csv_file = open("./data/MI19-06-18_19h27m44s","r",encoding = "ms932",errors = "", newline = "")
 f = csv.reader(csv_file, delimiter=",",doublequote=True, lineterminator="\r\n", quotechar='"', skipinitialspace=True)
 header = next(f)
 #print(header)
