@@ -4,52 +4,79 @@ from matplotlib import pyplot as plt
 import os
 import pandas as pd
 import sys
+import datetime
 
-def noise_canceler(datetime,data,check_day_str,threshold):
+def eliminate_f(date_str):
+    date = datetime.datetime.strptime(date_str, '%Y-%m-%d %H:%M:%S:%f')
+    return date.strftime('%Y-%m-%d %H:%M:%S')
+
+def search_start(dataTime,start_dataTime_str):
     i = 0
-    cancel_num = 0
-    while i < (len(data) - 1 - cancel_num) :
-        if abs(data[i] - data[i+1]) >= threshold:
-            data.pop(i+1)
-            datetime.pop(i+1)
-            cancel_num += 1
+    while i < len(dataTime):
+        check_dataTime_str = eliminate_f(dataTime[i])
+        if check_dataTime_str == start_dataTime_str:
+            return i
         i += 1
-    data_set = [datetime,data,check_day_str,threshold]
-    return data_set
+    return -1
 
-def all_plot(datetime,data,check_day_str,threshold):
+def search_end(dataTime,end_dataTime_str,start_arg):
+    i = start_arg
+    while i < len(dataTime):
+        check_dataTime_str = eliminate_f(dataTime[i])
+        if check_dataTime_str == end_dataTime_str:
+            next_check_dataTime_str = eliminate_f(dataTime[i+1])
+            if next_check_dataTime_str != end_dataTime_str:
+                return i
+        i += 1
+    return -1
+
+def df_maker(dataTime,data,start_dataTime_str,end_dataTime_str):
+    start_arg = search_start(dataTime,start_dataTime_str)
+    if start_arg == -1:
+        print("dataTime over range")
+        sys.exit(1)
+    end_arg = search_end(dataTime,end_dataTime_str,start_arg)
+    if end_arg == -1:
+        print("dataTime over range")
+        sys.exit(1)
+    df_list = {'dataTime':[eliminate_f(dataTime[start_arg])],'data':[]}
+    num_data = 0
+    count = 0 
+    for i in range(start_arg, end_arg + 1):
+        num_data += data[i]
+        count += 1
+        if eliminate_f(dataTime[i]) != eliminate_f(dataTime[i+1]):
+            df_list['data'].append(float(num_data)/count)
+            df_list['dataTime'].append(eliminate_f(dataTime[i+1]))
+            num_data = 0
+            count = 0
+    df_list['dataTime'].pop()
     df = pd.DataFrame({
-        'date time':pd.to_datetime(datetime),
-        'Magnetic force':data
+        'date time':pd.to_datetime(df_list['dataTime']),
+        'Magnetic force':df_list['data']
     })
-    df =df.set_index('date time')
+    return df
+
+#ex. start_datetime_str = 2017-08-01 01:00:00
+def fig_plot(dataTime,data,start_datetime_str,end_datetime_str,fig_size):
+    df = df_maker(dataTime,data,start_datetime_str,end_datetime_str)
+    df = df.set_index('date time')
     # Figureの初期化
-    fig = plt.figure(figsize=(30, 8)) #...1
+    if fig_size == 's':
+        fig = plt.figure(figsize=(12, 8))
+    if fig_size == 'm':
+        fig = plt.figure(figsize=(24, 8))
+    if fig_size == 'l':
+        fig = plt.figure(figsize=(36, 8))
     # Figure内にAxesを追加()
     ax = fig.add_subplot(111) #...2
     ax.plot(df.index,df['Magnetic force'])
-    ax.set_title(check_day_str[0] + ' ' + 'Magnetic force(nT)_threshold=' + str(threshold))
-    my_makedirs('./fig/' + check_day_str[0])
-    plt.savefig('./fig/' + check_day_str[0] + '/' + check_day_str[0] + '_' + 'Magnetic force(nT)_threshold=' + str(threshold) + '.png')
+    ax.set_title(start_datetime_str + ' to ' + end_datetime_str + ' ' + 'Magnetic force(nT)')
+    fig_dir = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%d %H:%M:%S')
+    end_dir = datetime.datetime.strptime(end_datetime_str, '%Y-%m-%d %H:%M:%S')
+    my_makedirs('./fig/' + fig_dir.strftime('%Y-%m-%d'))
+    plt.savefig('./fig/' + fig_dir.strftime('%Y-%m-%d') + '/' + fig_dir.strftime('%Y-%m-%d_%H_%M_%S') + end_dir.strftime('-%d_%H_%M_%S') + '_' + fig_size + '_' + 'Magnetic(nT).png')
     #Splt.show()
-
-def one_hour_plot(num,time,magnetic,check_day_str,threshold):
-    if check_day_str[num] != '0':
-        #convert
-        time_np = np.array(time)
-        magnetic_np = np.array(magnetic)
-
-        # Figureの初期化
-        fig = plt.figure(figsize=(12, 8)) #...1
-        # Figure内にAxesを追加()
-        ax = fig.add_subplot(111) #...2
-        ax.plot(time_np[num], magnetic_np[num]) #...3
-
-        # legend and title
-        #ax.legend(loc='best')
-        ax.set_title(check_day_str[num] + ' ' + str(num) + ":00-" + str(num+1) + ":00-" + 'Magnetic force(nT)_threshold=' + str(threshold))
-        my_makedirs('./fig/' + check_day_str[0])
-        plt.savefig('./fig/' + check_day_str[0] + '/' + check_day_str[0] + '_'  + str(num) + "00-" + str(num+1) + "00-" + 'Magnetic force(nT)_threshold=' + str(threshold) + '.png')
 
 def my_makedirs(path):
     if not os.path.isdir(path):
@@ -65,29 +92,14 @@ def main():
     header = next(f)
     #print(header)
 
-    time = [[] for i in range(24)]
-    magnetic = [[] for i in range(24)]
-    check_day_str = ['0' for i in range(24)]
-
-    datetime = []
+    dataTime = []
     data = []
     for row in f:#row is list
-        datetime.append(row[0].replace('_','-') + ' ' + row[1] + ':' + row[2] + ':' + row[3])
+        dataTime.append(row[0].replace('_','-') + ' ' +row[1]+':'+row[2]+':'+row[3]+':'+row[4]) #'2012-12-29 13:49:37:000123'
         data.append(float(row[7]))
-
-        for i in range(24):
-            if int(row[1]) == i:
-                if check_day_str[i] == '0':
-                    check_day_str[i] = row[0]
-                time[i].append(int(row[2]))
-                magnetic[i].append(float(row[7]))
-                #print(str(i) + " " + row[1] + " " + row[2] + " " +row[7])
-
-    all_plot(datetime,data,check_day_str,0)
-    data_set = noise_canceler(datetime,data,check_day_str,10)
-    all_plot(data_set[0],data_set[1],data_set[2],data_set[3])
-    for i in range(24):
-        one_hour_plot(i,time,magnetic,check_day_str,0)
+    fig_plot(dataTime,data,'2019-06-19 19:05:00','2019-06-19 19:07:00','m')
+    #fig_plot(dataTime,data,'2019-06-19 19:00:00','2019-06-19 19:10:00','m')
+    #fig_plot(dataTime,data,'2019-06-19 19:00:00','2019-06-20 08:00:00','l')
 
 if __name__ == '__main__':
 	main()

@@ -30,7 +30,7 @@ def convert_nT(value):
 def main():
     now = datetime.datetime.now()#get time
     with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}'.format(now),'w') as f:
-        data = ['year_month_day','hour','minute','second','float','raw','volte(V)','Magnetic force(nT)']
+        data = ['year_month_day','hour','minute','second','float','raw','Magnetic force(nT)']
         writer = csv.writer(f)
         writer.writerow(data)
         counter = 0
@@ -40,7 +40,7 @@ def main():
             if counter == 1000:
                 print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
                 counter = 0
-            data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_V(value),convert_nT(value)]
+            data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_nT(value)]
             writer = csv.writer(f)
             writer.writerow(data)
             counter += 1
