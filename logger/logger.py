@@ -28,23 +28,29 @@ def convert_nT(value):
     return (volte * 1000) / 0.16
 
 def main():
-    now = datetime.datetime.now()#get time
-    with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}.png'.format(now),'w') as f:
-        data = ['year_month_day','hour','minute','second','float','raw','Magnetic force(nT)']
-        writer = csv.writer(f)
-        writer.writerow(data)
-        counter = 0
-        while True:            
-            now = datetime.datetime.now()#get time
-            value = adc.read_adc(0,gain=GAIN)
-            if counter == 1000:
-                print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
-                counter = 0
-            data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_nT(value)]
+    while True:
+        now = datetime.datetime.now()#get time
+        today = '{0:%Y-%m-%d}'.format(now)
+        with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}.png'.format(now),'w') as f:
+            data = ['year_month_day','hour','minute','second','float','raw','Magnetic force(nT)']
             writer = csv.writer(f)
             writer.writerow(data)
-            counter += 1
-    return 0
+            counter = 0
+            while True:            
+                now = datetime.datetime.now()#get time
+                value = adc.read_adc(0,gain=GAIN)
+                if counter == 1000:
+                    print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
+                    counter = 0
+                
+                data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_nT(value)]
+                writer = csv.writer(f)
+                writer.writerow(data)
+                counter += 1
+                if '{0:%Y-%m-%d}'.format(now) != today:
+                    break
+                today = '{0:%Y-%m-%d}'.format(now)
+        return 0
 
 if __name__ == '__main__':
 	main()
