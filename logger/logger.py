@@ -29,7 +29,7 @@ def convert_nT(value):
 
 def main():
     now = datetime.datetime.now()#get time
-    with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}'.format(now),'w') as f:
+    with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}.png'.format(now),'w') as f:
         data = ['year_month_day','hour','minute','second','float','raw','Magnetic force(nT)']
         writer = csv.writer(f)
         writer.writerow(data)

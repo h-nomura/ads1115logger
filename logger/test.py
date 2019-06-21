@@ -1,4 +1,6 @@
-ls = [1,2,3,4,5]
-for i in range(len(ls)-1):
-    print(i,i+1)
-    print(ls[i],ls[i+1])
+day = '2017-08-01 02:03:04'
+print(day[8:10])
+a = int(day[8:10]) + 1
+b = '{0:02d}'.format(a)
+day =day[0:8] + b + day[10:19]
+print(day)
