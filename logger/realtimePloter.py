@@ -73,8 +73,8 @@ def main():
                     'date time':pd.to_datetime(df_list['dataTime']),
                     'Magnetic force':df_list['data']
                 })
-                df = df.set_index('date time')
-                plt.plot(df.index,df['Magnetic force'])
+                li.set_xdata(df['date time'])
+                li.set_ydata(df['Magnetic force'])   
                 plt.xlim(min(df['date time']), max(df['date time']))
                 plt.draw()
                 plt.pause(0.001)
