@@ -32,13 +32,17 @@ def convert_nT(value):
 
 def main():
     plt.ion()
-    #fig = plt.figure(figsize=(12, 8))
-    #ax = fig.add_subplot(111)
-    plt.ylim(10000, 30000)
+    plt.figure(figsize=(10, 6))
+    plt.ylim(19000, 25000)
     plt.xlabel("time[s]")
-    plt.ylabel("Magnetic force(nT)")
-    #ax.set_title('Magnetic force(nT)')
+    plt.ylabel("Voltage[V]")
+    plt.grid()    
     df_list = {'dataTime':[],'data':[]}
+    df = pd.DataFrame({
+            'date time':pd.to_datetime(df_list['dataTime']),
+            'Magnetic force':df_list['data']
+        })
+    li, = plt.plot(df['date time'], df['Magnetic force'])
 
     while True:
         now = datetime.datetime.now()#get time
@@ -51,7 +55,7 @@ def main():
             while True:            
                 now = datetime.datetime.now()#get time
                 value = adc.read_adc(0,gain=GAIN)
-                if counter == 1000:
+                if counter == 100:
                     print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
                     counter = 0
                 
@@ -62,7 +66,7 @@ def main():
 
                 df_list['data'].append(convert_nT(value))
                 df_list['dataTime'].append('{0:%Y-%m-%d %H:%M:%S.%f}'.format(now))
-                if len(df_list['data']) > 100:
+                if len(df_list['data']) > 500:
                     df_list['data'].pop(0)
                     df_list['dataTime'].pop(0)
                 df = pd.DataFrame({
@@ -71,8 +75,9 @@ def main():
                 })
                 df = df.set_index('date time')
                 plt.plot(df.index,df['Magnetic force'])
+                plt.xlim(min(df['date time']), max(df['date time']))
                 plt.draw()
-                
+                plt.pause(0.001)
                 if '{0:%Y-%m-%d}'.format(now) != today:
                     break
                 today = '{0:%Y-%m-%d}'.format(now)
