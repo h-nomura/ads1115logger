@@ -16,15 +16,15 @@ adc = Adafruit_ADS1x15.ADS1115()
 # 111 : FSR = +/- 0.256 V
 # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
 GAIN = 0
-
+GAIN_V = [6.144,4.096,2.048,1.024,0.512,0.256,0.256,0.256]
 import time, datetime
 import csv
 import pprint
 def convert_V(value):
-    return (6.144 * (float(value) / 32768)) * 6.970260223 - 15.522769516
+    return (GAIN_V[GAIN] * (float(value) / 32768)) * 6.970260223 - 15.522769516
 
 def convert_nT(value):
-    volte = (6.144 * (float(value) / 32768)) * 6.970260223 - 15.522769516
+    volte = (GAIN_V[GAIN] * (float(value) / 32768)) * 6.970260223 - 15.522769516
     return (volte * 1000) / 0.16
 
 def main():
@@ -50,7 +50,6 @@ def main():
                 if '{0:%Y-%m-%d}'.format(now) != today:
                     break
                 today = '{0:%Y-%m-%d}'.format(now)
-        return 0
 
 if __name__ == '__main__':
 	main()
