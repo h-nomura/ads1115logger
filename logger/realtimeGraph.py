@@ -5,10 +5,10 @@
 #adc = Adafruit_ADS1x15.ADS1115()
 
 import csv
-import numpy as np
+
 from matplotlib import pyplot as plt
 import os
-import pandas as pd
+
 import sys
 import datetime
 # Choose a gain of 1 for reading voltages from 0 to 4.09V.
@@ -24,9 +24,9 @@ import datetime
 # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
 GAIN = 0
 GAIN_V = [6.144,4.096,2.048,1.024,0.512,0.256,0.256,0.256]
-import pprint
 
 import random
+import matplotlib.dates as mdates
 
 def convert_nT(value):
     volte = (GAIN_V[GAIN] * (float(value) / 32768)) * 6.970260223 - 15.522769516
@@ -37,14 +37,10 @@ def main():
     plt.figure(figsize=(10, 6))
     plt.ylim(19000, 25000)
     plt.xlabel("time[s]")
-    plt.ylabel("Voltage[V]")
+    plt.ylabel("Magnetic force(nT)")
     plt.grid()    
     df_list = {'dataTime':[],'data':[]}
-    df = pd.DataFrame({
-            'date time':pd.to_datetime(df_list['dataTime']),
-            'Magnetic force':df_list['data']
-        })
-    li, = plt.plot(df['date time'], df['Magnetic force'])
+    li, = plt.plot(df_list['dataTime'],df_list['data'])
 
     counter = 0
     while True:            
@@ -55,21 +51,16 @@ def main():
             print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
             counter = 0
         df_list['data'].append(convert_nT(value))
-        df_list['dataTime'].append('{0:%Y-%m-%d %H:%M:%S.%f}'.format(now))
+        df_list['dataTime'].append(now)
         if len(df_list['data']) > 500:
             df_list['data'].pop(0)
             df_list['dataTime'].pop(0)
-        df = pd.DataFrame({
-            'date time':pd.to_datetime(df_list['dataTime']),
-            'Magnetic force':df_list['data']
-        })
-        li.set_xdata(df['date time'])
-        li.set_ydata(df['Magnetic force'])           
-        plt.xlim(min(df['date time']), max(df['date time']))
-        #df = df.set_index('date time')
-        #plt.plot(df.index,df['Magnetic force'])
+        xfmt = mdates.DateFormatter("%M/%S")
+        li.set_xdata(df_list['dataTime'])
+        li.set_ydata(df_list['data'])        
+        plt.xlim(min(df_list['dataTime']), max(df_list['dataTime']))
         plt.draw()
-        plt.pause(0.001)
+        plt.pause(0.01)
         counter += 1
 
 if __name__ == '__main__':

@@ -5,10 +5,9 @@ import Adafruit_ADS1x15
 adc = Adafruit_ADS1x15.ADS1115()
 
 import csv
-import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.dates as mdates
 import os
-import pandas as pd
 import sys
 import datetime
 # Choose a gain of 1 for reading voltages from 0 to 4.09V.
@@ -24,7 +23,6 @@ import datetime
 # See table 3 in the ADS1015/ADS1115 datasheet for more info on gain.
 GAIN = 1
 GAIN_V = [6.144,4.096,2.048,1.024,0.512,0.256,0.256,0.256]
-import pprint
 
 def convert_nT(value):
     volte = (GAIN_V[GAIN] * (float(value) / 32768)) * 6.970260223 - 15.522769516
@@ -33,16 +31,12 @@ def convert_nT(value):
 def main():
     plt.ion()
     plt.figure(figsize=(10, 6))
-    plt.ylim(19000, 25000)
+    plt.ylim(19000, 22000)
     plt.xlabel("time[s]")
-    plt.ylabel("Voltage[V]")
+    plt.ylabel("Magnetic force(nT)")
     plt.grid()    
     df_list = {'dataTime':[],'data':[]}
-    df = pd.DataFrame({
-            'date time':pd.to_datetime(df_list['dataTime']),
-            'Magnetic force':df_list['data']
-        })
-    li, = plt.plot(df['date time'], df['Magnetic force'])
+    li, = plt.plot(df_list['dataTime'],df_list['data'])
 
     while True:
         now = datetime.datetime.now()#get time
@@ -65,17 +59,14 @@ def main():
                 counter += 1
 
                 df_list['data'].append(convert_nT(value))
-                df_list['dataTime'].append('{0:%Y-%m-%d %H:%M:%S.%f}'.format(now))
+                df_list['dataTime'].append(now)
                 if len(df_list['data']) > 500:
                     df_list['data'].pop(0)
                     df_list['dataTime'].pop(0)
-                df = pd.DataFrame({
-                    'date time':pd.to_datetime(df_list['dataTime']),
-                    'Magnetic force':df_list['data']
-                })
-                li.set_xdata(df['date time'])
-                li.set_ydata(df['Magnetic force'])   
-                plt.xlim(min(df['date time']), max(df['date time']))
+                xfmt = mdates.DateFormatter("%M/%S")
+                li.set_xdata(df_list['dataTime'])
+                li.set_ydata(df_list['data'])        
+                plt.xlim(min(df_list['dataTime']), max(df_list['dataTime']))
                 plt.draw()
                 plt.pause(0.001)
                 if '{0:%Y-%m-%d}'.format(now) != today:
