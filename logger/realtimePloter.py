@@ -32,12 +32,12 @@ def convert_nT(value):
 
 def main():
     plt.ion()
-    fig = plt.figure(figsize=(12, 8))
-    ax = fig.add_subplot(111)
+    #fig = plt.figure(figsize=(12, 8))
+    #ax = fig.add_subplot(111)
     plt.ylim(10000, 30000)
     plt.xlabel("time[s]")
     plt.ylabel("Magnetic force(nT)")
-    ax.set_title('Magnetic force(nT)')
+    #ax.set_title('Magnetic force(nT)')
     df_list = {'dataTime':[],'data':[]}
 
     while True:
@@ -70,7 +70,7 @@ def main():
                     'Magnetic force':df_list['data']
                 })
                 df = df.set_index('date time')
-                ax.plot(df.index,df['Magnetic force'])
+                plt.plot(df.index,df['Magnetic force'])
                 plt.draw()
                 
                 if '{0:%Y-%m-%d}'.format(now) != today:
