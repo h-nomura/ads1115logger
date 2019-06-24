@@ -31,7 +31,7 @@ def main():
     while True:
         now = datetime.datetime.now()#get time
         today = '{0:%Y-%m-%d}'.format(now)
-        with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}.png'.format(now),'w') as f:
+        with open('./data/MI{0:%y-%m-%d_%Hh%Mm%Ss}.csv'.format(now),'w') as f:
             data = ['year_month_day','hour','minute','second','float','raw','Magnetic force(nT)']
             writer = csv.writer(f)
             writer.writerow(data)
