@@ -46,23 +46,25 @@ def main():
             writer = csv.writer(f)
             writer.writerow(data)
             counter = 0
-            while True:            
-                now = datetime.datetime.now()#get time
-                value = adc.read_adc(0,gain=GAIN)
-                if counter == 100:
-                    print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
-                    counter = 0
-                
-                data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_nT(value)]
-                writer = csv.writer(f)
-                writer.writerow(data)
-                counter += 1
+            while True:
+                while True:
+                    now = datetime.datetime.now()#get time
+                    value = adc.read_adc(0,gain=GAIN)                
+                    data = ['{0:%Y-%m-%d}'.format(now),'{0:%H}'.format(now),'{0:%M}'.format(now),'{0:%S}'.format(now),'{0:%f}'.format(now),value,convert_nT(value)]
+                    writer = csv.writer(f)
+                    writer.writerow(data)
+                    
+                    df_list['data'].append(convert_nT(value))
+                    df_list['dataTime'].append(now)
+                    if len(df_list['data']) > 500:
+                        df_list['data'].pop(0)
+                        df_list['dataTime'].pop(0)
+                    if counter == 100:
+                        print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
+                        counter = 0
+                        break
+                    counter += 1
 
-                df_list['data'].append(convert_nT(value))
-                df_list['dataTime'].append(now)
-                if len(df_list['data']) > 500:
-                    df_list['data'].pop(0)
-                    df_list['dataTime'].pop(0)
                 xfmt = mdates.DateFormatter("%M/%S")
                 li.set_xdata(df_list['dataTime'])
                 li.set_ydata(df_list['data'])        
