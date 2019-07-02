@@ -65,20 +65,22 @@ def df_maker(dataTime,data,start_dataTime_str,end_dataTime_str,rawFlag):
     return df
 
 #ex. start_datetime_str = 2017-08-01 01:00:00
-def fig_plot(dataTime,data,start_datetime_str,end_datetime_str,fig_size,rawFlag):
+def fig_plot(dataTime,data,start_datetime_str,end_datetime_str,fig_size,rawFlag,ymin,ymax):
     df = df_maker(dataTime,data,start_datetime_str,end_datetime_str,rawFlag)
     df = df.set_index('date time')
     # Figureの初期化
     if fig_size == 's':
         fig = plt.figure(figsize=(12, 8))
     elif fig_size == 'm':
-        fig = plt.figure(figsize=(24, 8))
+        fig = plt.figure(figsize=(8, 4.5))
     else:
-        fig = plt.figure(figsize=(36, 8))
+        fig = plt.figure(figsize=(12, 4.5))
     # Figure内にAxesを追加()
     ax = fig.add_subplot(111) #...2
+    if ymin != 0:
+        ax.set_ylim([ymin,ymax])
     ax.plot(df.index,df['Magnetic force'])
-    ax.set_title(start_datetime_str + ' to ' + end_datetime_str + ' ' + 'Magnetic force(nT)' + rawFlag)
+    ax.set_title(start_datetime_str + '(JST) to ' + end_datetime_str + '(JST) ' + 'northward component of magnetic force(nT)' + rawFlag)
     fig_dir = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%d %H:%M:%S')
     end_dir = datetime.datetime.strptime(end_datetime_str, '%Y-%m-%d %H:%M:%S')
     my_makedirs('./fig/' + fig_dir.strftime('%Y-%m-%d'))
@@ -99,7 +101,7 @@ def rewrite_day(reference_date,num):
 
 def hour_fig_plot(dataTime,data,reference_date,num,fig_size):
     for i in range(num):
-        fig_plot(dataTime,data,rewrite_day(reference_date,i),rewrite_day(reference_date,i+1),fig_size,'')
+        fig_plot(dataTime,data,rewrite_day(reference_date,i),rewrite_day(reference_date,i+1),fig_size,'',0,0)
 
 def main():
     args = sys.argv
@@ -120,8 +122,20 @@ def main():
     print(dataTime[len(dataTime)-1])
     #fig_plot(dataTime,data,'2019-06-19 19:05:00','2019-06-19 19:06:00','m','RAW')
     #fig_plot(dataTime,data,'2019-06-19 19:05:00','2019-06-19 19:06:00','m','')
-    fig_plot(dataTime,data,'2019-06-20 23:30:00','2019-06-21 16:00:00','l','')
-    hour_fig_plot(dataTime,data,'2019-06-20 23:30:00',15,'l')
+    #fig_plot(dataTime,data,'2019-06-20 23:30:00','2019-06-21 16:00:00','l','')
+    #hour_fig_plot(dataTime,data,'2019-06-20 23:30:00',15,'l')
+    #fig_plot(dataTime,data,'2019-06-20 23:50:00','2019-06-20 23:51:00','l','')
+    #fig_plot(dataTime,data,'2019-06-20 23:50:00','2019-06-20 23:51:00','l','RAW')
+    
+    #fig_plot(dataTime,data,'2019-06-28 19:44:00','2019-06-28 19:45:00','l','',18000,18700)
+    #fig_plot(dataTime,data,'2019-06-28 19:44:00','2019-06-28 19:45:00','l','RAW',18000,18700)
+    #fig_plot(dataTime,data,'2019-06-28 16:40:00','2019-06-28 16:41:00','l','')
+    #fig_plot(dataTime,data,'2019-06-28 16:40:00','2019-06-28 16:41:00','l','RAW')
+    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 12:00:00','l','',0,0)
+    fig_plot(dataTime,data,'2019-06-28 16:30:00','2019-06-28 17:30:00','l','',0,0)
+    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 00:01:00','l','',19400,19800)
+    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 00:01:00','l','RAW',0,0)
+    #hour_fig_plot(dataTime,data,'2019-06-29 00:00:00',24,'m')
     
     
 
