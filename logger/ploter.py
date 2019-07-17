@@ -79,6 +79,7 @@ def fig_plot(dataTime,data,start_datetime_str,end_datetime_str,fig_size,rawFlag,
     ax = fig.add_subplot(111) #...2
     if ymin != 0:
         ax.set_ylim([ymin,ymax])
+    ax.yaxis.grid(True)
     ax.plot(df.index,df['Magnetic force'])
     ax.set_title(start_datetime_str + '(JST) to ' + end_datetime_str + '(JST) ' + 'northward component of magnetic force(nT)' + rawFlag)
     fig_dir = datetime.datetime.strptime(start_datetime_str, '%Y-%m-%d %H:%M:%S')
@@ -131,11 +132,28 @@ def main():
     #fig_plot(dataTime,data,'2019-06-28 19:44:00','2019-06-28 19:45:00','l','RAW',18000,18700)
     #fig_plot(dataTime,data,'2019-06-28 16:40:00','2019-06-28 16:41:00','l','')
     #fig_plot(dataTime,data,'2019-06-28 16:40:00','2019-06-28 16:41:00','l','RAW')
-    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 12:00:00','l','',0,0)
-    fig_plot(dataTime,data,'2019-06-28 16:30:00','2019-06-28 17:30:00','l','',0,0)
-    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 00:01:00','l','',19400,19800)
-    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 00:01:00','l','RAW',0,0)
+
+    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 12:00:00','l','',19400,20400)
+    #fig_plot(dataTime,data,'2019-06-29 00:00:00','2019-06-29 01:00:00','l','',19400,20400)
+    #fig_plot(dataTime,data,'2019-06-29 01:00:00','2019-06-29 02:00:00','l','',19400,20400)
+    #fig_plot(dataTime,data,'2019-06-29 01:00:00','2019-06-29 01:01:00','l','',19400,20400)
+    #fig_plot(dataTime,data,'2019-06-29 01:00:00','2019-06-29 01:01:00','l','RAW',19400,20400)
+
+    #fig_plot(dataTime,data,'2019-06-21 00:00:00','2019-06-21 12:00:00','l','',20400,21400)
+    #fig_plot(dataTime,data,'2019-06-21 01:00:00','2019-06-21 02:00:00','l','',20400,21400)
+    #fig_plot(dataTime,data,'2019-06-21 01:00:00','2019-06-21 01:01:00','l','',20400,21400)
+    #fig_plot(dataTime,data,'2019-06-21 01:00:00','2019-06-21 01:01:00','l','RAW',20400,21400)
+
+    #fig_plot(dataTime,data,'2019-06-28 16:30:00','2019-06-28 17:30:00','l','',28000,29000)
+    #fig_plot(dataTime,data,'2019-06-28 16:50:00','2019-06-28 16:51:00','l','',28000,29000)
+    #fig_plot(dataTime,data,'2019-06-28 16:50:00','2019-06-28 16:51:00','l','RAW',28000,29000)
+
     #hour_fig_plot(dataTime,data,'2019-06-29 00:00:00',24,'m')
+
+    fig_plot(dataTime,data,'2019-07-11 19:06:00','2019-07-11 19:09:00','l','',15500,16000)
+    fig_plot(dataTime,data,'2019-07-11 19:06:00','2019-07-11 19:09:00','l','RAW',15500,16000)
+    
+        
     
     
 
