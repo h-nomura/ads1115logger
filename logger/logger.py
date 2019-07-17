@@ -39,7 +39,7 @@ def main():
             while True:            
                 now = datetime.datetime.now()#get time
                 value = adc.read_adc(0,gain=GAIN)
-                if counter == 1000:
+                if counter == 500:
                     print('{0:%Y-%m-%d  %H:%M:%S}'.format(now) + '  Magnetic force(nT)==' + str(convert_nT(value)))
                     counter = 0
                 
